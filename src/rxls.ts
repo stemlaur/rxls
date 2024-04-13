@@ -33,10 +33,21 @@ export class Observable<T> {
     }
 
     static of<T>(...theArgs: T[]): Observable<T> {
-        return new Observable(observer => {
+        return new Observable<T>(observer => {
             for (const a of theArgs) {
                 observer.next(a);
             }
         });
     }
+}
+
+export function fromEvent(element: HTMLElement, type: string): Observable<Event> {
+    return new Observable<Event>(observer => {
+        if (!element) {
+            throw new Error('it is not ready!');
+        }
+        element.addEventListener(type, (e: Event) => {
+            observer.next(e);
+        })
+    });
 }

@@ -1,4 +1,10 @@
 
+body {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
 .bubble {
   height: 5rem;
   width: 5rem;
