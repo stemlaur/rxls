@@ -41,7 +41,7 @@ export class Observable<T> {
     }
 
     pipe(...pipeOperations: any) {
-        return pipeFn(this, pipeOperations)
+        return pipeFn(this, ...pipeOperations)
     }
 }
 
