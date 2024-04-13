@@ -39,6 +39,10 @@ export class Observable<T> {
             }
         });
     }
+
+    pipe(...pipeOperations: any) {
+        return pipeFn(this, pipeOperations)
+    }
 }
 
 export function fromEvent(element: HTMLElement, type: string): Observable<Event> {
@@ -51,3 +55,44 @@ export function fromEvent(element: HTMLElement, type: string): Observable<Event>
         })
     });
 }
+
+export class Operation<T = void> {
+    public complete: boolean = false;
+    public skip: boolean = false;
+
+    constructor(public value: T) {}
+}
+
+export const pipeFn = (target$: any, ...pipeOperations: any) => {
+    return new Observable<any>((observer) => {
+        target$.subscribe(
+            async (value: any) => {
+                try {
+                    let state: Operation<any> = new Operation(value);
+                    for (const pipeOperation of pipeOperations) {
+                        const update = pipeOperation(state);
+                        if (update.then) {
+                            state = await update;
+                        } else {
+                            state = update;
+                        }
+                        if (state.skip || state.complete) {
+                            break;
+                        }
+                    }
+                    if (state.skip) {
+                        return;
+                    }
+                    observer.next(state.value);
+                    if (state.complete) {
+                        observer.complete();
+                    }
+                } catch (error) {
+                    observer.error(error);
+                }
+            },
+            (error: any) => observer.error(error),
+            () => observer.complete(),
+        );
+    });
+};

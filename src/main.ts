@@ -2,14 +2,19 @@ import './style.css'
 // @ts-ignore
 import {printV} from "./print.ts";
 // @ts-ignore
-import {fromEvent, Observable} from "./rxls.ts";
+import {fromEvent, Observable, Operation, pipeFn} from "./rxls.ts";
 
-const input = document.querySelector('#it')! as HTMLElement;
-const div = document.querySelector('#bubbles')! as HTMLElement;
+const c$ = Observable.of('foo', 'bar');
 
-const c$ = fromEvent(input, 'keyup');
+export const map = (cb: any) => (op: any) => {
+    const value = cb(op.value);
+    return new Operation(value);
+};
 
-c$.subscribe((event: Event) => {
-    const el = (event.target as HTMLInputElement);
-    div.innerHTML = el.value.toUpperCase();
-});
+const toto$ = pipeFn(c$, map((value: any) => {
+    return value.toUpperCase()
+}), map((value: any) => {
+    return value + ' test '
+}));
+
+toto$.subscribe(printV)
