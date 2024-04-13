@@ -63,6 +63,22 @@ export class Operation<T = void> {
     constructor(public value: T) {}
 }
 
+export function map(cb: (arg0: any) => any): any {
+    return (state: any) => {
+        const value = cb(state.value);
+        return new Operation(value);
+    }
+}
+
+export function filter(predicate: (value: any) => boolean): any {
+    return (state: any) => {
+        if(!predicate(state.value)) {
+            state.skip = true;
+        }
+        return state;
+    }
+}
+
 export const pipeFn = (target$: any, ...pipeOperations: any) => {
     return new Observable<any>((observer) => {
         target$.subscribe(

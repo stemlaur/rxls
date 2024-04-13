@@ -2,14 +2,10 @@ import './style.css'
 // @ts-ignore
 import {printV} from "./print.ts";
 // @ts-ignore
-import {fromEvent, Observable, Operation, pipeFn} from "./rxls.ts";
+import {filter, fromEvent, map, Observable, Operation, pipeFn} from "./rxls.ts";
 
-const c$ = Observable.of('foo', 'bar');
+const c$ = Observable.of(1, 2, 3, 4, 5);
 
-export const map = (cb: any) => (op: any) => {
-    const value = cb(op.value);
-    return new Operation(value);
-};
 //
 // const toto$ = pipeFn(c$, map((value: any) => {
 //     return value.toUpperCase()
@@ -20,7 +16,7 @@ export const map = (cb: any) => (op: any) => {
 // toto$.subscribe(printV)
 
 const toto$ = c$.pipe(
-    map((value: any) => value.toUpperCase()),
+    filter((value: any) => value > 3),
     map((value: any) => value + ' test')
 );
 
