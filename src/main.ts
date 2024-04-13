@@ -2,21 +2,25 @@ import './style.css'
 import {printV} from "./print.ts";
 import {Observable} from "./rxls.ts";
 
-const o$ = new Observable(observer => {
+
+
+const o2$ = new Observable<any>(observer => {
     observer.next(1);
     observer.next("B");
     observer.error("no !");
     observer.complete();
 });
 
+const o$ = Observable.of<any>(1, 'B', 'C');
+
 o$.subscribe({
     next: (value: any) => {
-        printV(value);
+        printV(value, 'green');
     },
     error: (error: any) => {
-        printV('err: ' + error);
+        printV('err: ' + error, 'red');
     },
     complete: () => {
-        console.log('COMPLETE')
+        console.log('COMPLETE', 'blue')
     }
 });

@@ -1,8 +1,8 @@
-export function printV(value: any) {
+export function printV(value: any, color: string = 'yellow') {
     const element = document.querySelector('#bubbles')!;
 
     function wrapInBubble(value: any) {
-        return `<div class="bubble">${value}</div>`;
+        return `<div class="bubble" style="background: ${color})">${value}</div>`;
     }
 
     if(value) {
