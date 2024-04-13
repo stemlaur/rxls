@@ -1,0 +1,11 @@
+
+.bubble {
+  height: 5rem;
+  width: 5rem;
+  background-color: lightpink;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 1rem
+}
