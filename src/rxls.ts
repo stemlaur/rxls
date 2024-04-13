@@ -12,7 +12,7 @@ export class Observable<T> {
     }
 
     subscribe(observer: Partial<Observer<T>> | ((value: T) => void)) {
-        if(typeof observer === 'object') {
+        if (typeof observer === 'object') {
             this._innerFn({
                 next: observer?.next || function (_: any) {
                 },
@@ -60,38 +60,36 @@ export class Operation<T = void> {
     public complete: boolean = false;
     public skip: boolean = false;
 
-    constructor(public value: T) {}
+    constructor(public value: T) {
+    }
 }
 
-export function map(cb: (arg0: any) => any): any {
+export type OperatorFn = (e: any) => Operation;
+
+export function map(cb: (arg0: any) => any): OperatorFn {
     return (state: any) => {
         const value = cb(state.value);
         return new Operation(value);
     }
 }
 
-export function filter(predicate: (value: any) => boolean): any {
+export function filter(predicate: (value: any) => boolean): OperatorFn {
     return (state: any) => {
-        if(!predicate(state.value)) {
+        if (!predicate(state.value)) {
             state.skip = true;
         }
         return state;
     }
 }
 
-export const pipeFn = (target$: any, ...pipeOperations: any) => {
+export function pipeFn<T>(target$: Observable<T>, ...pipeOperations: OperatorFn[]) {
     return new Observable<any>((observer) => {
-        target$.subscribe(
-            async (value: any) => {
+        target$.subscribe({
+            next: (value: any) => {
                 try {
                     let state: Operation<any> = new Operation(value);
                     for (const pipeOperation of pipeOperations) {
-                        const update = pipeOperation(state);
-                        if (update.then) {
-                            state = await update;
-                        } else {
-                            state = update;
-                        }
+                        state = pipeOperation(state);
                         if (state.skip || state.complete) {
                             break;
                         }
@@ -107,8 +105,8 @@ export const pipeFn = (target$: any, ...pipeOperations: any) => {
                     observer.error(error);
                 }
             },
-            (error: any) => observer.error(error),
-            () => observer.complete(),
-        );
+            error: (error: any) => observer.error(error),
+            complete: () => observer.complete(),
+        });
     });
-};
+}
