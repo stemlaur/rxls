@@ -2,8 +2,6 @@ import './style.css'
 import {printV} from "./print.ts";
 import {Observable} from "./rxls.ts";
 
-
-
 const o2$ = new Observable<any>(observer => {
     observer.next(1);
     observer.next("B");
@@ -13,7 +11,7 @@ const o2$ = new Observable<any>(observer => {
 
 const o$ = Observable.of<any>(1, 'B', 'C');
 
-o$.subscribe({
+o2$.subscribe({
     next: (value: any) => {
         printV(value, 'green');
     },
@@ -23,4 +21,8 @@ o$.subscribe({
     complete: () => {
         console.log('COMPLETE', 'blue')
     }
+});
+
+o$.subscribe((value: any) => {
+    printV(value);
 });

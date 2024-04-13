@@ -11,12 +11,25 @@ export class Observable<T> {
         this._innerFn = fn;
     }
 
-    subscribe(observer: Partial<Observer<T>>) {
-        this._innerFn({
-            next: observer?.next || function (_: any) {},
-            error: observer?.error || function(_: any) {},
-            complete: observer?.complete || function() {}
-        });
+    subscribe(observer: Partial<Observer<T>> | ((value: T) => void)) {
+        if(typeof observer === 'object') {
+            this._innerFn({
+                next: observer?.next || function (_: any) {
+                },
+                error: observer?.error || function (_: any) {
+                },
+                complete: observer?.complete || function () {
+                },
+            });
+        } else if (typeof observer === 'function') {
+            this._innerFn({
+                next: observer,
+                error: function (_: any) {
+                },
+                complete: function () {
+                }
+            });
+        }
     }
 
     static of<T>(...theArgs: T[]): Observable<T> {
