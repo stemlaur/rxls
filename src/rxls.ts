@@ -56,6 +56,16 @@ export function fromEvent(element: HTMLElement, type: string): Observable<Event>
     });
 }
 
+export function everyXMilliseconds(iteration: number): Observable<number> {
+    let numS = 0;
+    return new Observable<number>(observer => {
+       setInterval(() => {
+           observer.next(numS);
+           numS += iteration;
+       }, iteration);
+    });
+}
+
 export class Operation<T = void> {
     public complete: boolean = false;
     public skip: boolean = false;

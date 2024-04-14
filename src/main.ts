@@ -2,9 +2,9 @@ import './style.css'
 // @ts-ignore
 import {printV} from "./print.ts";
 // @ts-ignore
-import {filter, fromEvent, map, Observable, Operation, pipeFn} from "./rxls.ts";
+import {everyXMilliseconds, filter, map, Observable,} from "./rxls.ts";
 
-const c$ = Observable.of(1, 2, 3, 4, 5);
+// const c$ = Observable.of(1, 2, 3, 4, 5);
 
 //
 // const toto$ = pipeFn(c$, map((value: any) => {
@@ -15,9 +15,14 @@ const c$ = Observable.of(1, 2, 3, 4, 5);
 //
 // toto$.subscribe(printV)
 
-const toto$ = c$.pipe(
-    filter((value: any) => value > 3),
-    map((value: any) => value + ' test')
-);
+// const toto$ = c$.pipe(
+//     filter((value: any) => value > 3),
+//     map((value: any) => value + ' test')
+// );
 
-toto$.subscribe(printV)
+everyXMilliseconds(100).pipe(
+    filter((value: any) => value % 2 == 0),
+    map(value => `${value} seconds`)).subscribe((value => {
+        document.querySelector('#bubbles')!.innerHTML = value;
+    })
+)
